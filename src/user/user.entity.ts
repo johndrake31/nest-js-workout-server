@@ -1,6 +1,7 @@
 /* eslint-disable prettier/prettier */
 import { Injectable } from '@nestjs/common';
-import { Column, Entity, PrimaryGeneratedColumn, Unique } from 'typeorm';
+import { WorkoutsEntity } from 'src/workouts/workout.entity';
+import { Column, Entity, JoinColumn, JoinTable, ManyToMany, OneToMany, PrimaryGeneratedColumn, Unique } from 'typeorm';
 
 @Injectable()
 @Unique(['email'])
@@ -18,6 +19,26 @@ export class UserEntity {
   @Column({ type: 'varchar', length: 500 })
   email: string;
 
-  @Column({ type: 'varchar', length: 500 })
+  @Column({ type: 'varchar', length: 500, select: false})
   password: string;
+  
+  @Column('varchar', { length: 255 })
+  roles: string;
+
+
+  @OneToMany(
+    () => WorkoutsEntity,
+    (workoutsEntity) => workoutsEntity.user,
+    { cascade: ['insert', 'update'], onDelete: 'CASCADE' },
+  )
+  @JoinColumn()
+  workouts: WorkoutsEntity[];
+
+
+  @ManyToMany(
+    () => WorkoutsEntity,
+    (workoutsEntity) => workoutsEntity.user,
+  )
+  @JoinTable({ name: 'favoriteWorkouts' })
+  favoriteWorkouts: WorkoutsEntity[];
 }

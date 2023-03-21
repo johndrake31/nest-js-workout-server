@@ -5,6 +5,8 @@ import { AppService } from './app.service';
 import { UserModule } from './user/user.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { UserEntity } from './user/user.entity';
+import { WorkoutsModule } from './workouts/workouts.module';
+import { ExercisesModule } from './exercises/exercises.module';
 
 const env = process.env;
 @Module({
@@ -23,6 +25,8 @@ const env = process.env;
       socketPath: '/Applications/MAMP/tmp/mysql/mysql.sock',
     }),
     UserModule,
+    WorkoutsModule,
+    ExercisesModule,
   ],
   controllers: [AppController],
   providers: [AppService],

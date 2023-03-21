@@ -9,4 +9,8 @@ export class AuthUserDTO {
   @IsNotEmpty()
   @IsString()
   password: string;
+
+  @IsNotEmpty()
+  @IsString()
+  roles: string;
 }

@@ -9,6 +9,8 @@ import { IUser } from './user.interface';
 import * as bcrypt from 'bcrypt';
 import { AuthUserDTO } from './dto/auth-user.dto';
 
+import { createJwt, authJwt } from 'src/shared/auth/auth';
+
 @Injectable()
 export class UserService {
   constructor(
@@ -17,19 +19,20 @@ export class UserService {
   ) {}
 
   async create(newUser: CreateUserDTO): Promise<IUser | string> {
-    const salt = await bcrypt.genSalt();
-    const hashPassword = await bcrypt.hash(newUser.password, salt);
-    newUser.password = hashPassword;
-
     const existingUser = await this.userRepo.findOneBy({
       email: newUser.email,
     });
-
     const newUserObject: any = { ...newUser };
     if (newUserObject.id || existingUser) {
       return 'could not create new user';
     }
-    return await this.userRepo.save(newUserObject);
+
+    const salt = await bcrypt.genSalt();
+    const hashPassword = await bcrypt.hash(newUser.password, salt);
+    newUser.password = hashPassword;
+    newUser.roles = 'user';
+    const createdUser = await this.userRepo.save(newUser);
+    return createJwt(createdUser);
   }
 
   async findOneById(id: number): Promise<IUser> {
@@ -48,10 +51,15 @@ export class UserService {
   }
 
   async loginUser(auth: AuthUserDTO): Promise<string> {
-    const user = await this.userRepo.findOneBy({ email: auth.email });
+    const user = await this.userRepo.findOneOrFail({
+      where: { email: auth.email },
+      select: ['firstName', 'lastName', 'email', 'roles', 'id', 'password'],
+    });
     if (user) {
       const match = await bcrypt.compare(auth.password, user.password);
-      if (match) return 'Credentials are correct!';
+      if (match) {
+        return createJwt({ ...user });
+      }
       return 'Invalid Credentials!';
     }
     return 'Invalid Invalid!';
