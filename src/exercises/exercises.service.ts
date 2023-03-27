@@ -3,7 +3,7 @@ import { ExerciseEntity } from './exercise.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { UserEntity } from 'src/user/user.entity';
-import { authJwt } from 'src/auth/auth';
+import { authJwt } from 'src/auth';
 import { WorkoutsEntity } from 'src/workouts/workout.entity';
 import { CreateExerciseDTO } from './dto/create-exercise.dto';
 

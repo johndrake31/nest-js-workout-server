@@ -5,7 +5,7 @@ import { WorkoutsEntity } from './workout.entity';
 import { CreateWorkoutDTO } from './dto/create-workout.dto';
 
 import { UserEntity } from 'src/user/user.entity';
-import { authJwt } from 'src/auth/auth';
+import { authJwt } from 'src/auth';
 
 @Injectable()
 export class WorkoutsService {

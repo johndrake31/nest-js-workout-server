@@ -8,8 +8,8 @@ import { UserEntity } from './user.entity';
 import { IUser } from './user.interface';
 import * as bcrypt from 'bcrypt';
 import { AuthUserDTO } from './dto/auth-user.dto';
+import { createJwt, authJwt } from 'src/auth';
 
-import { createJwt, authJwt } from 'src/auth/auth';
 
 @Injectable()
 export class UserService {
@@ -50,15 +50,19 @@ export class UserService {
     return await this.userRepo.delete(id);
   }
 
-  async loginUser(auth: AuthUserDTO): Promise<UserEntity | string> {
+  async loginUser(auth: AuthUserDTO): Promise<any> {
     const user = await this.userRepo.findOneOrFail({
       where: { email: auth.email },
       select: ['firstName', 'lastName', 'email', 'roles', 'id', 'password'],
     });
     if (user) {
       const match = await bcrypt.compare(auth.password, user.password);
-      if (match) {
-        return user;
+      if (match) { 
+        const payload = {...user};
+        delete user.password;
+        return {
+          access_token: createJwt(payload),
+        }; 
       }
       return 'Invalid Credentials!';
     }

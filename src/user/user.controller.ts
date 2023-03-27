@@ -7,7 +7,9 @@ import {
   Param,
   Post,
   Headers,
+  UseGuards,
 } from '@nestjs/common';
+import { LocalAuthGuard } from 'src/auth/guards/local-auth.guard';
 import { DeleteResult } from 'typeorm';
 import { AuthUserDTO } from './dto/auth-user.dto';
 import { CreateUserDTO } from './dto/create-users.dto';
@@ -25,10 +27,11 @@ export class UserController {
     return await this.userServ.create(newUser);
   }
 
-  // @Post(':login')
-  // async authUser(@Body() auth: AuthUserDTO): Promise<string> {
-  //   return await this.userServ.loginUser(auth);
-  // }
+  @UseGuards(LocalAuthGuard)
+  @Post(':login')
+  async authUser(@Body() auth: AuthUserDTO): Promise<any> {
+    return await this.userServ.loginUser(auth);
+  }
   
   @Get(':id')
   async findOne(@Param('id') id): Promise<IUser> {
