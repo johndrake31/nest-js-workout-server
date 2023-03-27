@@ -1,5 +1,4 @@
 import { Injectable } from '@nestjs/common';
-import { UserEntity } from '../user/user.entity';
 import { Column, Entity, PrimaryGeneratedColumn, ManyToOne } from 'typeorm';
 import { WorkoutsEntity } from 'src/workouts/workout.entity';
 
@@ -14,6 +13,7 @@ export class ExerciseEntity {
 
   @Column('simple-array')
   sets: number[];
+
   @Column('simple-array')
   reps: number[];
 

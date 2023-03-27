@@ -5,7 +5,7 @@ import { WorkoutsEntity } from './workout.entity';
 import { CreateWorkoutDTO } from './dto/create-workout.dto';
 
 import { UserEntity } from 'src/user/user.entity';
-import { authJwt } from 'src/shared/auth/auth';
+import { authJwt } from 'src/auth/auth';
 
 @Injectable()
 export class WorkoutsService {
@@ -18,6 +18,7 @@ export class WorkoutsService {
 
   async create(workout: CreateWorkoutDTO, jwt: string) {
     const token = await authJwt(jwt);
+    if (!token) return 'Invalid token';
     const user = await this.userRepo.findOneBy({ email: token.email });
     if (!user) return 'Problems!!!!';
     if (user) {

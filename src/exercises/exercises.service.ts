@@ -3,7 +3,7 @@ import { ExerciseEntity } from './exercise.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { UserEntity } from 'src/user/user.entity';
-import { authJwt } from 'src/shared/auth/auth';
+import { authJwt } from 'src/auth/auth';
 import { WorkoutsEntity } from 'src/workouts/workout.entity';
 import { CreateExerciseDTO } from './dto/create-exercise.dto';
 
@@ -20,6 +20,7 @@ export class ExercisesService {
 
   async create(exercise: CreateExerciseDTO, jwt: string) {
     const token = await authJwt(jwt);
+    if (!token) return 'Invalid token';
     const user = await this.userRepo.findOneBy({ id: token.id });
     const workout = await this.woRepo.findOneOrFail({
       where: { user: { id: user.id }, id: exercise.workoutId },

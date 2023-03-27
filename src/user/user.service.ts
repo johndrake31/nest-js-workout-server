@@ -9,7 +9,7 @@ import { IUser } from './user.interface';
 import * as bcrypt from 'bcrypt';
 import { AuthUserDTO } from './dto/auth-user.dto';
 
-import { createJwt, authJwt } from 'src/shared/auth/auth';
+import { createJwt, authJwt } from 'src/auth/auth';
 
 @Injectable()
 export class UserService {

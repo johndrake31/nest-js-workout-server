@@ -8,7 +8,7 @@ export class WorkoutsController {
   constructor(private readonly workoutServ: WorkoutsService) {}
 
   @Post()
-  async authUser(
+  async addWorkout(
     @Body() workout: CreateWorkoutDTO,
     @Headers('Authorization') head: any,
   ): Promise<WorkoutsEntity | string> {

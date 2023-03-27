@@ -7,6 +7,10 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { UserEntity } from './user/user.entity';
 import { WorkoutsModule } from './workouts/workouts.module';
 import { ExercisesModule } from './exercises/exercises.module';
+import { ImagesModule } from './images/images.module';
+import { MulterModule } from '@nestjs/platform-express';
+import { ServeStaticModule } from '@nestjs/serve-static';
+import { join } from 'path';
 
 const env = process.env;
 @Module({
@@ -27,6 +31,13 @@ const env = process.env;
     UserModule,
     WorkoutsModule,
     ExercisesModule,
+    ImagesModule,
+    MulterModule.register({
+      dest: './files',
+    }),
+    ServeStaticModule.forRoot({
+      rootPath: join(__dirname, '..', 'files'),
+    }),
   ],
   controllers: [AppController],
   providers: [AppService],
