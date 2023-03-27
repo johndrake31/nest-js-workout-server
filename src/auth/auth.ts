@@ -26,25 +26,25 @@ export const authJwt = async (jwt: string) => {
   }
 };
 
-export const verifyToken = (request, response, next) => {
-  const authorization = request.get('authorization');
-  const token =
-    authorization && authorization.toLowerCase().startsWith('bearer ')
-      ? authorization.substring(7)
-      : null;
+// export const verifyToken = (request, response, next) => {
+//   const authorization = request.get('authorization');
+//   const token =
+//     authorization && authorization.toLowerCase().startsWith('bearer ')
+//       ? authorization.substring(7)
+//       : null;
 
-  if (!request.headers.authorization) {
-    return response.status(401).json({ error: 'Authorization required' });
-  }
-  if (token === 'null') {
-    return response.status(401).json({ error: 'token missing' });
-  }
-  const payload = verify(token, process.env.JWT_SECRET);
-  if (!payload) {
-    return response.status(401).json({ error: 'token missing or invalid' });
-  }
-  next();
-};
+//   if (!request.headers.authorization) {
+//     return response.status(401).json({ error: 'Authorization required' });
+//   }
+//   if (token === 'null') {
+//     return response.status(401).json({ error: 'token missing' });
+//   }
+//   const payload = verify(token, process.env.JWT_SECRET);
+//   if (!payload) {
+//     return response.status(401).json({ error: 'token missing or invalid' });
+//   }
+//   next();
+// };
 
 export const createJwt = (user: UserEntity) => {
   return sign(

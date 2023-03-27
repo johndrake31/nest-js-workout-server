@@ -15,7 +15,6 @@ import { ImagesService } from './images.service';
 import { FileInterceptor, FilesInterceptor } from '@nestjs/platform-express';
 import { diskStorage } from 'multer';
 import { editFileName, imageFileFilter } from 'src/utils/file-upload.utils';
-import { AuthInterceptor } from 'src/auth/auth.interceptor';
 import { AuthGuard } from '@nestjs/passport';
 
 @Controller('images')
@@ -25,7 +24,6 @@ export class ImagesController {
   @UseGuards(AuthGuard('jwt'))
   @Post()
   @UseInterceptors(
-    AuthInterceptor,
     FileInterceptor('image', {
       storage: diskStorage({
         destination: './files',

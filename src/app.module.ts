@@ -11,6 +11,7 @@ import { ImagesModule } from './images/images.module';
 import { MulterModule } from '@nestjs/platform-express';
 import { ServeStaticModule } from '@nestjs/serve-static';
 import { join } from 'path';
+import { AuthModule } from './auth/auth.module';
 
 const env = process.env;
 @Module({
@@ -29,6 +30,7 @@ const env = process.env;
       socketPath: '/Applications/MAMP/tmp/mysql/mysql.sock',
     }),
     UserModule,
+    AuthModule,
     WorkoutsModule,
     ExercisesModule,
     ImagesModule,

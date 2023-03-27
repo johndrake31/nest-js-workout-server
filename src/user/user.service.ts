@@ -32,7 +32,7 @@ export class UserService {
     newUser.password = hashPassword;
     newUser.roles = 'user';
     const createdUser = await this.userRepo.save(newUser);
-    return createJwt(createdUser);
+    createdUser;
   }
 
   async findOneById(id: number): Promise<IUser> {
@@ -50,7 +50,7 @@ export class UserService {
     return await this.userRepo.delete(id);
   }
 
-  async loginUser(auth: AuthUserDTO): Promise<string> {
+  async loginUser(auth: AuthUserDTO): Promise<UserEntity | string> {
     const user = await this.userRepo.findOneOrFail({
       where: { email: auth.email },
       select: ['firstName', 'lastName', 'email', 'roles', 'id', 'password'],
@@ -58,7 +58,7 @@ export class UserService {
     if (user) {
       const match = await bcrypt.compare(auth.password, user.password);
       if (match) {
-        return createJwt({ ...user });
+        return user;
       }
       return 'Invalid Credentials!';
     }

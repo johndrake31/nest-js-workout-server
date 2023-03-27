@@ -25,10 +25,10 @@ export class UserController {
     return await this.userServ.create(newUser);
   }
 
-  @Post(':login')
-  async authUser(@Body() auth: AuthUserDTO): Promise<string> {
-    return await this.userServ.loginUser(auth);
-  }
+  // @Post(':login')
+  // async authUser(@Body() auth: AuthUserDTO): Promise<string> {
+  //   return await this.userServ.loginUser(auth);
+  // }
   
   @Get(':id')
   async findOne(@Param('id') id): Promise<IUser> {
