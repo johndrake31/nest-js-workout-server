@@ -33,6 +33,7 @@ export class UserController {
     return await this.userServ.loginUser(auth);
   }
   
+  @UseGuards(LocalAuthGuard)
   @Get(':id')
   async findOne(@Param('id') id): Promise<IUser> {
     return await this.userServ.findOneById(+id);
