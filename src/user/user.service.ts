@@ -8,7 +8,7 @@ import { UserEntity } from './user.entity';
 import { IUser } from './user.interface';
 import * as bcrypt from 'bcrypt';
 import { AuthUserDTO } from './dto/auth-user.dto';
-import { createJwt, authJwt } from 'src/auth';
+import { createJwt, authJwt } from 'src/shared/auth';
 
 
 @Injectable()
@@ -30,24 +30,34 @@ export class UserService {
     const salt = await bcrypt.genSalt();
     const hashPassword = await bcrypt.hash(newUser.password, salt);
     newUser.password = hashPassword;
-    newUser.roles = 'user';
+    newUser.roles = ['user'];
     const createdUser = await this.userRepo.save(newUser);
     createdUser;
   }
 
-  async findOneById(id: number): Promise<IUser> {
-    return await this.userRepo.findOneBy({ id });
+  async findOneById(id: number, jwt: string): Promise<IUser| string> {
+    const token = await authJwt(jwt);
+    if (!token) return 'Invalid token';
+    if(token.roles ==='superAdmin' || id === token.id){
+      return await this.userRepo.findOneBy({ id });
+    }
+    return 'invalid request';
   }
 
   async findAll(): Promise<IUser[]> {
     return await this.userRepo.find();
   }
 
-  async update(id: number, user: UpdateUserDTO): Promise<UpdateResult> {
+  async update(id: number, user: UpdateUserDTO): Promise<UpdateResult | string> {
     return await this.userRepo.update(id, user);
   }
-  async deleteOneById(id: number): Promise<DeleteResult> {
-    return await this.userRepo.delete(id);
+  async deleteOneById(id: number, jwt:string): Promise<DeleteResult | string> {
+    const token = await authJwt(jwt);
+    if (!token) return 'Invalid token';
+    if(token.roles ==='superAdmin' || id === token.id){
+      return await this.userRepo.delete(id);
+    }
+    return 'invalid request';
   }
 
   async loginUser(auth: AuthUserDTO): Promise<any> {

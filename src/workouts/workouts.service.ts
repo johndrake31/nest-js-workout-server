@@ -1,11 +1,11 @@
 import { InjectRepository } from '@nestjs/typeorm';
 import { Injectable } from '@nestjs/common';
-import { Repository } from 'typeorm';
+import { DeleteResult, Repository } from 'typeorm';
 import { WorkoutsEntity } from './workout.entity';
 import { CreateWorkoutDTO } from './dto/create-workout.dto';
 
 import { UserEntity } from 'src/user/user.entity';
-import { authJwt } from 'src/auth';
+import { authJwt } from 'src/shared/auth';
 
 @Injectable()
 export class WorkoutsService {
@@ -30,4 +30,12 @@ export class WorkoutsService {
       return newWorkout;
     }
   }
+
+  // async getById(workout: CreateWorkoutDTO, jwt: string) {}
+  // async updateById(workout: CreateWorkoutDTO, jwt: string) {}
+
+  // async deleteOneById(id: number, jwt: string): Promise<DeleteResult> {
+  //   jwt;
+  //   return await this.woRepo.delete(id);
+  // }
 }

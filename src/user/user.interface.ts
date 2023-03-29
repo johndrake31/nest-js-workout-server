@@ -7,7 +7,7 @@ export interface IUser {
     lastName: string;
     email: string;
     password:string;
-    roles: string;
+    roles: string[];
     workouts: IWorkout[];
     favoriteWorkouts?: IWorkout[];
 }

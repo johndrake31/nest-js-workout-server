@@ -9,6 +9,7 @@ import {
   Headers,
   UseGuards,
 } from '@nestjs/common';
+import { AuthGuard } from '@nestjs/passport';
 import { LocalAuthGuard } from 'src/auth/guards/local-auth.guard';
 import { DeleteResult } from 'typeorm';
 import { AuthUserDTO } from './dto/auth-user.dto';
@@ -32,18 +33,29 @@ export class UserController {
   async authUser(@Body() auth: AuthUserDTO): Promise<any> {
     return await this.userServ.loginUser(auth);
   }
-  
-  @UseGuards(LocalAuthGuard)
+
+  @UseGuards(AuthGuard('jwt'))
   @Get(':id')
-  async findOne(@Param('id') id): Promise<IUser> {
-    return await this.userServ.findOneById(+id);
+  async findOne(
+    @Param('id') id,
+    @Headers('Authorization') jwt: string,
+  ): Promise<IUser | string> {
+    return await this.userServ.findOneById(+id, jwt);
   }
+
+  @UseGuards(AuthGuard('jwt'))
   @Delete(':id')
-  async deleteById(@Param('id') id): Promise<DeleteResult> {
-    return await this.userServ.deleteOneById(+id);
+  async deleteById(
+    @Param('id') id: number | string,
+    @Headers('Authorization') jwt: any,
+  ): Promise<DeleteResult | string> {
+    return await this.userServ.deleteOneById(+id, jwt);
   }
+
+  //TODO: ADD ROLES GUARD
+  @UseGuards(AuthGuard('jwt'))
   @Get()
-  async findAllUsers(): Promise<IUser[]> {
+  async findAllUsers(@Headers('Authorization') jwt: any): Promise<IUser[]> {
     return await this.userServ.findAll();
   }
 }

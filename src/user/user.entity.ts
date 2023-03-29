@@ -22,8 +22,8 @@ export class UserEntity {
   @Column({ type: 'varchar', length: 500, select: false})
   password: string;
   
-  @Column('varchar', { length: 255 })
-  roles: string;
+  @Column('simple-array', )
+  roles: string[];
 
 
   @OneToMany(
