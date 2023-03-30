@@ -9,6 +9,8 @@ import { IUser } from './user.interface';
 import * as bcrypt from 'bcrypt';
 import { AuthUserDTO } from './dto/auth-user.dto';
 import { createJwt, authJwt } from 'src/shared/auth';
+import { isInArray } from 'src/shared/tools/is-in-array';
+import { Role } from 'src/shared/types/role.enum';
 
 
 @Injectable()
@@ -38,23 +40,30 @@ export class UserService {
   async findOneById(id: number, jwt: string): Promise<IUser| string> {
     const token = await authJwt(jwt);
     if (!token) return 'Invalid token';
-    if(token.roles ==='superAdmin' || id === token.id){
+
+    if(isInArray(token.roles, Role.SuperAdmin)|| id === token.id){
       return await this.userRepo.findOneBy({ id });
     }
     return 'invalid request';
   }
 
-  async findAll(): Promise<IUser[]> {
-    return await this.userRepo.find();
+  async findAll(jwt: string): Promise<IUser[]| string> {
+    const token = await authJwt(jwt);
+    if (!token) return 'Invalid token';
+    if(isInArray(token.roles, Role.SuperAdmin)){
+      return await this.userRepo.find();
+    }
+    return 'invalid request';
   }
 
   async update(id: number, user: UpdateUserDTO): Promise<UpdateResult | string> {
     return await this.userRepo.update(id, user);
   }
+  
   async deleteOneById(id: number, jwt:string): Promise<DeleteResult | string> {
     const token = await authJwt(jwt);
     if (!token) return 'Invalid token';
-    if(token.roles ==='superAdmin' || id === token.id){
+    if(isInArray(token.roles, Role.SuperAdmin ) || id === token.id){
       return await this.userRepo.delete(id);
     }
     return 'invalid request';

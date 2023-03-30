@@ -1,13 +1,6 @@
-import {
-  IsNotEmpty,
-  IsString,
-  IsEmail,
-  IsArray,
-  IsNumber,
-} from 'class-validator';
+import { IsString, IsArray, IsNumber } from 'class-validator';
 //  @ValidateNested({ each: true })
-export class CreateWorkoutDTO {
-  @IsNotEmpty()
+export class UpdateWorkoutDTO {
   @IsString()
   mainTitle: string;
 
@@ -28,7 +21,4 @@ export class CreateWorkoutDTO {
 
   @IsString()
   imgUrl?: string;
-
-  @IsNumber()
-  user_id?: number;
 }

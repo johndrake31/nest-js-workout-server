@@ -55,7 +55,7 @@ export class UserController {
   //TODO: ADD ROLES GUARD
   @UseGuards(AuthGuard('jwt'))
   @Get()
-  async findAllUsers(@Headers('Authorization') jwt: any): Promise<IUser[]> {
-    return await this.userServ.findAll();
+  async findAllUsers(@Headers('Authorization') jwt: string): Promise<IUser[]| string> {
+    return await this.userServ.findAll(jwt);
   }
 }

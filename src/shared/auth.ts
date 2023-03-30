@@ -7,7 +7,7 @@ export interface IJwtTok {
   lastName: string;
   iat: number;
   exp: number;
-  roles: string;
+  roles: string[];
 }
 
 export const authJwt = async (jwt: string) => {
@@ -35,7 +35,7 @@ export const createJwt = (user: any) => {
       firstName: user.firstName,
       lastName: user.lastName,
       email: user.email,
-      roles: user.roles,
+      roles: [...user.roles],
       id: user.id,
     },
     process.env.JWT_SECRET,
