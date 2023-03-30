@@ -8,6 +8,8 @@ import { UpdateWorkoutDTO } from './dto/update-workout.dto';
 import { UserEntity } from 'src/user/user.entity';
 import { authJwt } from 'src/shared/auth';
 import { IWorkout } from './workouts.interface';
+import { isInArray } from 'src/shared/tools/is-in-array';
+import { Role } from 'src/shared/types/role.enum';
 
 @Injectable()
 export class WorkoutsService {
@@ -37,6 +39,9 @@ export class WorkoutsService {
   async getById(id: number, jwt: string): Promise<WorkoutsEntity | string> {
     const token = await authJwt(jwt);
     if (!token) return 'Invalid token';
+    if (isInArray(token.roles, Role.SuperAdmin)) {
+      return await this.woRepo.findOneBy({ id });
+    }
     const workout = await this.woRepo.findOneOrFail({
       where: { user: { id: token.id }, id },
     });
@@ -51,8 +56,6 @@ export class WorkoutsService {
   ): Promise<UpdateResult | string> {
     const token = await authJwt(jwt);
     if (!token) return 'Invalid token';
-
-    //check user and workout match
     const workout = await this.woRepo.findOneOrFail({
       where: { user: { id: token.id }, id },
     });
@@ -64,11 +67,27 @@ export class WorkoutsService {
   }
 
   async deleteOneById(id: number, jwt: string): Promise<DeleteResult | string> {
-    // add jwt check logic;
-    return await this.woRepo.delete(id);
+    const token = await authJwt(jwt);
+    if (!token) return 'Invalid token';
+    if (isInArray(token.roles, Role.SuperAdmin)) {
+      return await this.woRepo.delete(id);
+    }
+    const workout = await this.woRepo.findOneOrFail({
+      where: { user: { id: token.id }, id },
+    });
+    if (workout) {
+      return await this.woRepo.delete(id);
+    }
+    return 'error';
   }
+
   async findAll(jwt: string): Promise<IWorkout[] | string> {
-    // add jwt check logic;
-    return await this.woRepo.find();
+    const token = await authJwt(jwt);
+    if (!token) return 'Invalid token';
+    if (isInArray(token.roles, Role.SuperAdmin)) {
+      return await this.woRepo.find();
+    }
+    return 'invalid request';
   }
+  //TODO: Find all by User id
 }

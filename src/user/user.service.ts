@@ -56,10 +56,11 @@ export class UserService {
     return 'invalid request';
   }
 
+  //TODO: add logic for permision and other stuff
   async update(id: number, user: UpdateUserDTO): Promise<UpdateResult | string> {
     return await this.userRepo.update(id, user);
   }
-  
+
   async deleteOneById(id: number, jwt:string): Promise<DeleteResult | string> {
     const token = await authJwt(jwt);
     if (!token) return 'Invalid token';
