@@ -1,5 +1,11 @@
 import { Injectable } from '@nestjs/common';
-import { Column, Entity, PrimaryGeneratedColumn, ManyToOne } from 'typeorm';
+import {
+  Column,
+  Entity,
+  PrimaryGeneratedColumn,
+  ManyToOne,
+  JoinColumn,
+} from 'typeorm';
 import { WorkoutsEntity } from 'src/workouts/workout.entity';
 
 @Injectable()
@@ -43,7 +49,9 @@ export class ExerciseEntity {
     (workoutsEntity) => workoutsEntity.exercises,
     {
       onDelete: 'CASCADE',
+      eager: true,
     },
   )
+  @JoinColumn({ name: 'workoutId', referencedColumnName: 'id' })
   workout: WorkoutsEntity;
 }

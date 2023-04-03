@@ -10,7 +10,6 @@ import {
 export class CreateExerciseDTO {
   @IsNotEmpty()
   @IsString()
-  @IsEmail()
   title: string;
 
   @IsArray()

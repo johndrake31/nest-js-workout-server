@@ -2,22 +2,22 @@ import { IsString, IsArray, IsNumber } from 'class-validator';
 //  @ValidateNested({ each: true })
 export class UpdateWorkoutDTO {
   @IsString()
-  mainTitle: string;
+  mainTitle?: string;
 
   @IsString()
-  discriptionShort: string;
+  discriptionShort?: string;
 
   @IsString()
-  discriptionExtra: string;
+  discriptionExtra?: string;
 
   @IsArray()
-  weekDuration: number[];
+  weekDuration?: number[];
 
   @IsNumber()
-  restBreakSecs: number;
+  restBreakSecs?: number;
 
   @IsArray()
-  daysPerWeek: number[];
+  daysPerWeek?: number[];
 
   @IsString()
   imgUrl?: string;

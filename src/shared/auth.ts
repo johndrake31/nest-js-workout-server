@@ -14,7 +14,6 @@ export const authJwt = async (jwt: string) => {
   const userJwt = jwt.split(' ')[1];
   try {
     const varified = verify(userJwt, process.env.JWT_SECRET);
-    console.log(varified);
     if (varified) {
       return varified as IJwtTok;
     }
