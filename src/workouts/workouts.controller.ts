@@ -30,7 +30,7 @@ export class WorkoutsController {
     return await this.workoutServ.create(workout, head);
   }
 
-  //UPDATE METHODE
+  //UPDATE BY ID
   @UseGuards(AuthGuard('jwt'))
   @Post(':id')
   async update(
@@ -64,7 +64,7 @@ export class WorkoutsController {
   //TODO: ADD ROLES GUARD
   //Get All
   @UseGuards(AuthGuard('jwt'))
-  @Get('all')
+  @Get()
   async workouts(
     @Headers('Authorization') jwt: string,
   ): Promise<IWorkout[] | string> {

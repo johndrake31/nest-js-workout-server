@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { ExerciseEntity } from './exercise.entity';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository, UpdateResult } from 'typeorm';
+import { DeleteResult, Repository, UpdateResult } from 'typeorm';
 import { UserEntity } from 'src/user/user.entity';
 import { authJwt } from 'src/shared/auth';
 import { WorkoutsEntity } from 'src/workouts/workout.entity';
@@ -9,6 +9,7 @@ import { CreateExerciseDTO } from './dto/create-exercise.dto';
 import { UpdateExerciseDTO } from './dto/update-exercise.dto';
 import { isInArray } from 'src/shared/tools/is-in-array';
 import { Role } from 'src/shared/types/role.enum';
+import { IExercise } from './exercises.interface';
 
 @Injectable()
 export class ExercisesService {
@@ -58,22 +59,57 @@ export class ExercisesService {
     return 'error';
   }
 
-  // async updateById(
-  //   id: number,
-  //   exercise: UpdateExerciseDTO,
-  //   jwt: string,
-  // ): Promise<UpdateResult | string> {
-  //   const token = await authJwt(jwt);
-  //   if (!token) return 'Invalid token';
-  //   const user = await this.userRepo.findOneBy({ id: token.id });
-  //   const workout = await this.woRepo.findOneOrFail({
-  //     where: { user: { id: user.id }, id: exercise.workoutId },
-  //   });
+  async findAll(jwt: string): Promise<IExercise[] | string> {
+    const token = await authJwt(jwt);
+    if (!token) return 'Invalid token';
+    if (isInArray(token.roles, Role.SuperAdmin)) {
+      return await this.exerciseRepo.find();
+    }
+    return 'invalid request';
+  }
 
-  //   if (!user || !workout) return 'Problems!!!!';
-  //   if (user && workout) {
-  //     return 'add code';
-  //   }
-  //   return 'error';
-  // }
+  async updateById(
+    id: number,
+    exUpdate: UpdateExerciseDTO,
+    jwt: string,
+  ): Promise<UpdateResult | string> {
+    const token = await authJwt(jwt);
+    if (!token) return 'Invalid token';
+    const exercise = await this.exerciseRepo.findOneBy({
+      id,
+    });
+
+    if (exercise.workout.id) {
+      const user = await this.userRepo.findOneBy({ id: token.id });
+      const workout = await this.woRepo.findOneOrFail({
+        where: { user: { id: user.id }, id: exercise.workout.id },
+      });
+      if (workout) {
+        return await this.exerciseRepo.update(id, exUpdate);
+      }
+    }
+    return 'error';
+  }
+
+  async deleteById(id: number, jwt: string): Promise<DeleteResult | string> {
+    const token = await authJwt(jwt);
+    if (!token) return 'Invalid token';
+    if (isInArray(token.roles, Role.SuperAdmin)) {
+      return await this.exerciseRepo.delete(id);
+    }
+
+    const exercise = await this.exerciseRepo.findOneBy({
+      id,
+    });
+    if (exercise.workout.id) {
+      const user = await this.userRepo.findOneBy({ id: token.id });
+      const workout = await this.woRepo.findOneOrFail({
+        where: { user: { id: user.id }, id: exercise.workout.id },
+      });
+      if (workout) {
+        return await this.exerciseRepo.delete(id);
+      }
+    }
+    return 'error';
+  }
 }
