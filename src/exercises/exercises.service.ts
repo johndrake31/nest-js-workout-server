@@ -59,6 +59,7 @@ export class ExercisesService {
     return 'error';
   }
 
+  // TODO: find all by user id
   async findAll(jwt: string): Promise<IExercise[] | string> {
     const token = await authJwt(jwt);
     if (!token) return 'Invalid token';
@@ -80,6 +81,7 @@ export class ExercisesService {
     });
 
     if (exercise.workout.id) {
+      console.log(exercise.workout.id);
       const user = await this.userRepo.findOneBy({ id: token.id });
       const workout = await this.woRepo.findOneOrFail({
         where: { user: { id: user.id }, id: exercise.workout.id },

@@ -7,6 +7,7 @@ import {
   Get,
   Delete,
   Param,
+  Patch,
 } from '@nestjs/common';
 import { CreateWorkoutDTO } from './dto/create-workout.dto';
 import { WorkoutsEntity } from './workout.entity';
@@ -32,23 +33,13 @@ export class WorkoutsController {
 
   //UPDATE BY ID
   @UseGuards(AuthGuard('jwt'))
-  @Post(':id')
+  @Patch(':id')
   async update(
     @Body() workout: UpdateWorkoutDTO,
     @Headers('Authorization') head: any,
     @Param('id') id: number,
   ): Promise<string | UpdateResult> {
     return await this.workoutServ.updateById(id, workout, head);
-  }
-
-  //Get by ID
-  @UseGuards(AuthGuard('jwt'))
-  @Get(':id')
-  async findOne(
-    @Param('id') id,
-    @Headers('Authorization') jwt: string,
-  ): Promise<IWorkout | string> {
-    return await this.workoutServ.getById(+id, jwt);
   }
 
   //Delete One
@@ -59,6 +50,16 @@ export class WorkoutsController {
     @Headers('Authorization') jwt: any,
   ): Promise<DeleteResult | string> {
     return await this.workoutServ.deleteOneById(+id, jwt);
+  }
+
+  //Get by ID
+  @UseGuards(AuthGuard('jwt'))
+  @Get(':id')
+  async findOne(
+    @Param('id') id,
+    @Headers('Authorization') jwt: string,
+  ): Promise<IWorkout | string> {
+    return await this.workoutServ.getById(+id, jwt);
   }
 
   //TODO: ADD ROLES GUARD

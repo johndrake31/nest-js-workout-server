@@ -5,6 +5,7 @@ import {
   Get,
   Headers,
   Param,
+  Patch,
   Post,
   UseGuards,
 } from '@nestjs/common';
@@ -31,7 +32,7 @@ export class ExercisesController {
 
   //UPDATE BY ID
   @UseGuards(AuthGuard('jwt'))
-  @Post(':id')
+  @Patch(':id')
   async update(
     @Body() workout: UpdateExerciseDTO,
     @Headers('Authorization') head: any,

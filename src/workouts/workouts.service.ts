@@ -44,6 +44,7 @@ export class WorkoutsService {
     }
     const workout = await this.woRepo.findOneOrFail({
       where: { user: { id: token.id }, id },
+      relations: { exercises: true },
     });
     if (workout) return workout;
     return 'error';
@@ -87,7 +88,11 @@ export class WorkoutsService {
     if (isInArray(token.roles, Role.SuperAdmin)) {
       return await this.woRepo.find();
     }
-    return 'invalid request';
+
+    const workouts = await this.woRepo.find({
+      where: { user: { id: token.id } },
+    });
+    return workouts ?? 'error';
   }
   //TODO: Find all by User id
 }

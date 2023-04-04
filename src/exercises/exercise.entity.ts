@@ -49,7 +49,7 @@ export class ExerciseEntity {
     (workoutsEntity) => workoutsEntity.exercises,
     {
       onDelete: 'CASCADE',
-      eager: true,
+      // eager: true,
     },
   )
   @JoinColumn({ name: 'workoutId', referencedColumnName: 'id' })
