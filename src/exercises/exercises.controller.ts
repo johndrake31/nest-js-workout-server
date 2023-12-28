@@ -21,6 +21,7 @@ import { UpdateExerciseDTO } from './dto/update-exercise.dto';
 export class ExercisesController {
   constructor(private readonly exerciseServ: ExercisesService) {}
 
+  //create new exercise
   @UseGuards(AuthGuard('jwt'))
   @Post()
   async create(

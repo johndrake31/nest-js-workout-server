@@ -1,5 +1,5 @@
 /* eslint-disable prettier/prettier */
-import { Injectable } from '@nestjs/common';
+import { ConflictException, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { DeleteResult, Repository, UpdateResult } from 'typeorm';
 import { CreateUserDTO } from './dto/create-users.dto';
@@ -20,21 +20,30 @@ export class UserService {
     private readonly userRepo: Repository<UserEntity>,
   ) {}
 
-  async create(newUser: CreateUserDTO): Promise<IUser | string> {
+  async create(newUser: CreateUserDTO): Promise<IUser> {
     const existingUser = await this.userRepo.findOneBy({
       email: newUser.email,
     });
-    const newUserObject: any = { ...newUser };
-    if (newUserObject.id || existingUser) {
-      return 'could not create new user';
+    const existingUserName = {...existingUser}
+    if (existingUserName.id || existingUser) {
+      throw new ConflictException('User with this email already exists.');
     }
-
-    const salt = await bcrypt.genSalt();
-    const hashPassword = await bcrypt.hash(newUser.password, salt);
-    newUser.password = hashPassword;
-    newUser.roles = ['user'];
-    const createdUser = await this.userRepo.save(newUser);
-    createdUser;
+  
+    try {
+      const salt = await bcrypt.genSalt();
+      const hashPassword = await bcrypt.hash(newUser.password, salt);
+  
+      const createdUser = await this.userRepo.save({
+        ...newUser,
+        password: hashPassword,
+        roles: ['user'],
+      });
+  
+      return createdUser;
+    } catch (error) {
+      console.error('Error creating user:', error);
+      throw new ConflictException('Could not create new user.');
+    }
   }
 
   async findOneById(id: number, jwt: string): Promise<IUser| string> {

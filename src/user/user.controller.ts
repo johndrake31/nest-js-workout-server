@@ -8,7 +8,11 @@ import {
   Post,
   Headers,
   UseGuards,
+  Res,
+  HttpStatus,
 } from '@nestjs/common';
+import { Response } from 'express';
+
 import { AuthGuard } from '@nestjs/passport';
 import { LocalAuthGuard } from 'src/auth/guards/local-auth.guard';
 import { DeleteResult } from 'typeorm';
@@ -22,12 +26,17 @@ export class UserController {
   constructor(private readonly userServ: UserService) {}
 
   @Post()
-  async createUser(
-    @Body() newUser: CreateUserDTO,
-  ): Promise<CreateUserDTO | string> {
-    return await this.userServ.create(newUser);
+async createUser(@Body() newUser: CreateUserDTO, @Res() response: Response): Promise<IUser | { error: string }> {
+  try {
+    const user = await this.userServ.create(newUser);
+    return user;
+  } catch (error) {
+    console.error('Error creating user:', error);
+    response.status(HttpStatus.FORBIDDEN).json({
+      message: 'email already exists',
+    });
   }
-
+}
   @UseGuards(LocalAuthGuard)
   @Post(':login')
   async authUser(@Body() auth: AuthUserDTO): Promise<any> {
